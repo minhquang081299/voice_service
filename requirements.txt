@@ -1,0 +1,8 @@
+datasets==1.17.0
+Flask==2.0.2
+flask_marshmallow==0.14.0
+flask_sqlalchemy==2.5.1
+pyctcdecode==0.1.0
+soundfile==0.10.3.post1
+transformers==4.15.0
+Werkzeug==2.0.2
