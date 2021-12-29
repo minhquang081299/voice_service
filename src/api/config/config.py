@@ -10,7 +10,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
 class ModelConfig(object):
-    _ROOT = "/media/hoangnv/windata/company/project/apistt/src"
+    _ROOT = str(pathlib.Path(__file__).parent.parent.parent)
     W2V2_LM_PREFIX =_ROOT + '/static/model/LM/vi_lm_4grams.bin'
     W2V2_FOR_CTC_PREFIX = _ROOT+ '/static/model/Wav2Vec2ForCTC'
     W2V2_PROCESSOR_PREFIX = _ROOT+ '/static/model/Wav2Vec2Processor'

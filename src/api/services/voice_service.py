@@ -4,7 +4,10 @@ import soundfile as sf
 from datasets import load_dataset
 import soundfile as sf
 import kenlm
+from transformers.file_utils import cached_path, hf_bucket_url
 from pyctcdecode import Alphabet, BeamSearchDecoderCTC, LanguageModel
+import os, zipfile
+from api.config.config import ModelConfig
 
 class VoiceService():
     def __init__(self, 
@@ -31,6 +34,7 @@ class VoiceService():
         # convert space character representation
         vocab_list[tokenizer.word_delimiter_token_id] = " "
         # specify ctc blank char index, since conventially it is the last entry of the logit matrix
+        print(tokenizer)
         alphabet = Alphabet.build_alphabet(vocab_list, ctc_token_idx=tokenizer.pad_token_id)
         lm_model = kenlm.Model(self._ngram_lm_model_path)
         decoder = BeamSearchDecoderCTC(alphabet,
@@ -59,5 +63,20 @@ class VoiceService():
         
         
         
+def download_pretrain_model(lm_path, w2v2_processor_path, w2v2_ctc_path, cache_dir='./cache/')->None:
+    processor = Wav2Vec2Processor.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h", cache_dir = cache_dir)
+    model = Wav2Vec2ForCTC.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h",cache_dir=cache_dir)
+    processor.save_pretrained(w2v2_processor_path)
+    model.save_pretrained(w2v2_ctc_path)
+    lm_file = hf_bucket_url("nguyenvulebinh/wav2vec2-base-vietnamese-250h", filename='vi_lm_4grams.bin.zip')
+    lm_file = cached_path(lm_file,cache_dir=cache_dir)
+    with zipfile.ZipFile(lm_file, 'r') as zip_ref:
+        zip_ref.extractall(cache_dir)
+    lm_file = cache_dir + 'vi_lm_4grams.bin'
+
+if __name__ == "__main__":
+    processor_path = ModelConfig.W2V2_PROCESSOR_PREFIX
+    ctc_path = ModelConfig.W2V2_FOR_CTC_PREFIX
+    download_pretrain_model('', processor_path, ctc_path)
         
     
