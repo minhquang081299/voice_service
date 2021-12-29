@@ -8,11 +8,13 @@ import logging
 from api.routes.voice_routes import voice_routes
 from api.routes.file_routes import file_routes
 from api.config.config import ModelConfig as mc
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 
 app.config['UPLOAD_FOLDER'] = mc.UPLOAD_FOLDER
 db.init_app(app)
 ma.init_app(app)
+
 with app.app_context():
     db.create_all()
 
@@ -46,6 +48,9 @@ def not_found(e):
 db.init_app(app)
 ma.init_app(app)
 
+@app.route('/static/<path:path>')
+def serve_page(path):
+    return send_from_directory('static', path)
 
 
 with app.app_context():
