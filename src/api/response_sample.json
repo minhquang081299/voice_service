@@ -1,0 +1,11 @@
+{
+    "data": {
+        "result": true,
+        "message": "File thay đổi thành công ",
+        "item": {
+            "sess_id": "1234",
+            "url": "static/uploads/BCTH_1234/BCTH_output.docx"
+        }
+    },
+    "error": null
+}
