@@ -1,17 +1,19 @@
-import os
 from flask import Flask, send_from_directory
 from flask import jsonify
-from api.utils.database import db, ma
-from api.utils.responses import response_with
-import api.utils.responses as resp
+from src.api.utils.database import db, ma
+from src.api.utils.responses import response_with
+import src.api.utils.responses as resp
 import logging
-from api.routes.voice_routes import voice_routes
-from api.routes.file_routes import file_routes
-from api.config.config import ModelConfig as mc
+from os.path import join, dirname, realpath
+from src.api.routes.voice_routes import voice_routes
+from src.api.routes.file_routes import file_routes
+from src.api.config.config import ModelConfig as mc
 
-app = Flask(__name__, static_folder='static', static_url_path='/static')
+app = Flask(__name__)
+UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'static/')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+print(UPLOAD_FOLDER)
 
-app.config['UPLOAD_FOLDER'] = mc.UPLOAD_FOLDER
 db.init_app(app)
 ma.init_app(app)
 
@@ -48,9 +50,9 @@ def not_found(e):
 db.init_app(app)
 ma.init_app(app)
 
-@app.route('/static/<path:path>')
+@app.route('/src/static/<path:path>')
 def serve_page(path):
-    return send_from_directory('static', path)
+    return send_from_directory('/src/static', path, as_attachment=True)
 
 
 with app.app_context():
