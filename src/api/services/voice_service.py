@@ -7,7 +7,7 @@ import kenlm
 from transformers.file_utils import cached_path, hf_bucket_url
 from pyctcdecode import Alphabet, BeamSearchDecoderCTC, LanguageModel
 import os, zipfile
-from api.config.config import ModelConfig
+from src.api.config.config import ModelConfig
 
 class VoiceService():
     def __init__(self, 
