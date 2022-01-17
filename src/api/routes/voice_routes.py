@@ -76,7 +76,66 @@ def voice_regconition_controller(user):
             error = vars(error)
             rm = ResponseModel({},error)
     else:
-        error = ErrorModel("422", "Invalid or Missing Parameters. Not a wav or mp3 file")
+        error = ErrorModel("422", "Invalid or Missing Parameters. Not a wav, mp3 or m4a file")
+        error = vars(error)
+        rm = ResponseModel({},error)
+        
+    rm = jsonify(vars(rm)) 
+    rm.headers["Content-Type"] = "application/json;charset=utf8"
+    return rm
+
+#v2: split_file
+@voice_routes.route('/voice-service/long-audio/<int:user>', methods=['POST'])
+def voice_regconition_controller(user):
+    """this api accept file with duration of equal or bellow 25s
+    Returns:
+        response: contain data and error
+    """
+    error = None
+    data = None
+    payload = None
+    rm = None
+    
+    #check conditions when receive a request from a client
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    
+    #if there is a file requested to upload that's sastified
+    
+    if file and _allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+       
+        f_pre = str(Path(__file__).parent.parent.parent)+ f'/static/data/{str(user)}'
+        
+        if not os.path.exists(os.path.join(f_pre)):
+            os.mkdir(f_pre)
+            
+        fp = os.path.join(f_pre, filename)
+        file.save(fp)
+        f_service = FileService(f_pre, filename)
+        fnn = f_service.convert_audio()   
+        #check suitable file
+        if fnn!="":
+            audio_path = os.path.join(f_pre, fnn)            
+            rs = voice_service.voice_service(audio_path)
+            payload = {'text': rs}
+            data = DataModel(True, "Success", payload)
+            data = vars(data)
+            rm = ResponseModel(data,{})
+        else:
+            mess_err="Invalid or Missing Parameters. Check the duration and type of your audios. This version supports"\
+                " audios are bellow 25 seconds with 'wav, mp3, m4a' extensions"
+            error = ErrorModel("422", mess_err)
+            error = vars(error)
+            rm = ResponseModel({},error)
+    else:
+        error = ErrorModel("422", "Invalid or Missing Parameters. Not a wav, mp3 or m4a file")
         error = vars(error)
         rm = ResponseModel({},error)
         
