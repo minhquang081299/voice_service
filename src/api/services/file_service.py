@@ -17,19 +17,12 @@ class FileService:
             else return True
         """
         infor = self._read_info()
-        sr = infor['sample_rate']
-        duration = infor['duration']
-        max_lenght = af.MAX_DURATION*af.SR
-        if sr*duration>max_lenght:
-            return False
-        return True
+        duration = infor['duration']        
+        return duration<af.MAX_DURATION
         
     
     def _read_info(self) -> dict:
-       
-        print(self._fp)
         sr = librosa.get_samplerate(self._fp)
-        print(sr)
         duration = librosa.get_duration(filename = self._fp)
         return {"filename": self._fn,
                 "normed_filename": self._output,
@@ -49,29 +42,19 @@ class FileService:
         filename = self._fn.split(".")[0]
         filename = filename+'_norm.wav'
         self._output = self._prefix+'/'+filename
-        if not self.check_type():
-            if self.check_length():
-                try:
-                    os.system(f'ffmpeg -i {self._fp} -ar 16000 -ac 1 -sample_fmt s16 {self._output}')
-                    os.system(f'rm {self._fp}')
-                    return filename
-                except FileNotFoundError as e:
-                    print(e)
-                    print(f"File {self._fp} does not exist") 
-            else:
-                print("File's too large, please resize your audio file")
-              
+      
+        if self.check_length():
+            try:
+                os.system(f'ffmpeg -i {self._fp} -ar 16000 -ac 1 -sample_fmt s16 {self._output} -y') 
+                os.system(f'rm {self._fp}')
+                return filename
+            except FileNotFoundError as e:
+                print(e)
+                print(f"File {self._fp} does not exist") 
         else:
-            sr = self._read_info()
-            
-            if sr['sample_rate'] != 16000:
-                try:
-                    os.system(f'ffmpeg -i {self._fp} -ar 16000 -ac 1 -sample_fmt s16 {self._output}') 
-                    os.system(f'rm {self._fp}')
-                    return filename
-                except FileNotFoundError as e:
-                    print(e)
-                    print(f"File {self._fp} does not exist") 
+            print("File's too large, please resize your audio file")
+              
+        
         return ""
                 
             
