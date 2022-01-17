@@ -8,6 +8,8 @@ from transformers.file_utils import cached_path, hf_bucket_url
 from pyctcdecode import Alphabet, BeamSearchDecoderCTC, LanguageModel
 import os, zipfile
 from src.api.config.config import ModelConfig
+import librosa
+from src.api.config.config import ModelConfig as mc
 
 class VoiceService():
     def __init__(self, 
@@ -45,7 +47,6 @@ class VoiceService():
         speech, sampling_rate = sf.read(batch["file"], dtype='float32')
         batch["speech"] = speech
         batch["sampling_rate"] = sampling_rate
-        
         return batch
     
     def voice_service(self, audio_path):
@@ -59,6 +60,28 @@ class VoiceService():
         logits = self._w2v2_for_ctc(input_values).logits[0]
         beam_search_output = self._ngram_lm_model.decode(logits.cpu().detach().numpy(), beam_width=500)
         return beam_search_output
+    
+    def long_voice_service(self, audio_path):
+        rs = []
+        sr = librosa.get_samplerate(audio_path)
+        stream = librosa.stream(audio_path,
+                            block_length=64,
+                            frame_length=4096,
+                            hop_length=1024)
+        
+        for y in stream:
+            ds={'speech': y,'sampling_rate':sr}
+            input_values = self._w2v2_processor(
+                    ds["speech"], 
+                    sampling_rate=ds["sampling_rate"], 
+                    return_tensors="pt"
+                ).input_values
+            
+            logits = self._w2v2_for_ctc(input_values).logits[0]
+            beam_search_output = self._ngram_lm_model.decode(logits.cpu().detach().numpy(), beam_width=500)
+            rs.append(beam_search_output)
+            
+        return rs
         
         
         
@@ -78,5 +101,6 @@ class VoiceService():
 #     processor_path = ModelConfig.W2V2_PROCESSOR_PREFIX
 #     ctc_path = ModelConfig.W2V2_FOR_CTC_PREFIX
 #     download_pretrain_model('', processor_path, ctc_path)
+
         
     

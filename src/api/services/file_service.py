@@ -1,4 +1,3 @@
-import pydub
 import os
 import librosa
 from src.api.config.config import AudioConfig as af
@@ -54,7 +53,26 @@ class FileService:
         else:
             print("File's too large, please resize your audio file")
               
+        return ""
+    
+    def convert_long_audio(self) -> str:
+        """
+        return new name of converted file
+        if the file's not meet the conditions, return "" (empty string)
+        """
         
+        filename = self._fn.split(".")[0]
+        filename = filename+'_norm.wav'
+        self._output = self._prefix+'/'+filename
+      
+        
+        try:
+            os.system(f'ffmpeg -i {self._fp} -ar 16000 -ac 1 -sample_fmt s16 {self._output} -y') 
+            os.system(f'rm {self._fp}')
+            return filename
+        except FileNotFoundError as e:
+            print(e)
+            print(f"File {self._fp} does not exist") 
         return ""
                 
             
