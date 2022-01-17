@@ -19,7 +19,5 @@ class ModelConfig(object):
 class AudioConfig(object):
     EXTENSION = 'wav'
     SR = 16000
-    MAX_DURATION = 16
+    MAX_DURATION = 30
     
-if __name__ == "__main__":
-    print(ModelConfig.UPLOAD_FOLDER)
