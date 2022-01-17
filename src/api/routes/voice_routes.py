@@ -86,7 +86,7 @@ def voice_regconition_controller(user):
 
 #v2: split_file
 @voice_routes.route('/voice-service/long-audio/<int:user>', methods=['POST'])
-def voice_regconition_controller(user):
+def voice_regconition_controller_long_file(user):
     """this api accept file with duration of equal or bellow 25s
     Returns:
         response: contain data and error
@@ -119,17 +119,19 @@ def voice_regconition_controller(user):
         fp = os.path.join(f_pre, filename)
         file.save(fp)
         f_service = FileService(f_pre, filename)
-        fnn = f_service.convert_audio()   
+        fnn = f_service.convert_long_audio()   
+        
         #check suitable file
         if fnn!="":
             audio_path = os.path.join(f_pre, fnn)            
-            rs = voice_service.voice_service(audio_path)
+            rs = voice_service.long_voice_service(audio_path)
+            rs = ' '.join(rs)
             payload = {'text': rs}
             data = DataModel(True, "Success", payload)
             data = vars(data)
             rm = ResponseModel(data,{})
         else:
-            mess_err="Invalid or Missing Parameters. Check the duration and type of your audios. This version supports"\
+            mess_err="Invalid or Missing Parameters. Check the type of your audios. This version supports"\
                 " audios are bellow 25 seconds with 'wav, mp3, m4a' extensions"
             error = ErrorModel("422", mess_err)
             error = vars(error)
