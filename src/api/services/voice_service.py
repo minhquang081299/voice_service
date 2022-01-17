@@ -42,7 +42,7 @@ class VoiceService():
         return decoder
     
     def _map_to_array(self, batch):
-        speech, sampling_rate = sf.read(batch["file"])
+        speech, sampling_rate = sf.read(batch["file"], dtype='float32')
         batch["speech"] = speech
         batch["sampling_rate"] = sampling_rate
         
@@ -63,20 +63,20 @@ class VoiceService():
         
         
         
-def download_pretrain_model(lm_path, w2v2_processor_path, w2v2_ctc_path, cache_dir='./cache/')->None:
-    processor = Wav2Vec2Processor.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h", cache_dir = cache_dir)
-    model = Wav2Vec2ForCTC.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h",cache_dir=cache_dir)
-    processor.save_pretrained(w2v2_processor_path)
-    model.save_pretrained(w2v2_ctc_path)
-    lm_file = hf_bucket_url("nguyenvulebinh/wav2vec2-base-vietnamese-250h", filename='vi_lm_4grams.bin.zip')
-    lm_file = cached_path(lm_file,cache_dir=cache_dir)
-    with zipfile.ZipFile(lm_file, 'r') as zip_ref:
-        zip_ref.extractall(cache_dir)
-    lm_file = cache_dir + 'vi_lm_4grams.bin'
+# def download_pretrain_model(lm_path, w2v2_processor_path, w2v2_ctc_path, cache_dir='./cache/')->None:
+#     processor = Wav2Vec2Processor.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h", cache_dir = cache_dir)
+#     model = Wav2Vec2ForCTC.from_pretrained("nguyenvulebinh/wav2vec2-base-vietnamese-250h",cache_dir=cache_dir)
+#     processor.save_pretrained(w2v2_processor_path)
+#     model.save_pretrained(w2v2_ctc_path)
+#     lm_file = hf_bucket_url("nguyenvulebinh/wav2vec2-base-vietnamese-250h", filename='vi_lm_4grams.bin.zip')
+#     lm_file = cached_path(lm_file,cache_dir=cache_dir)
+#     with zipfile.ZipFile(lm_file, 'r') as zip_ref:
+#         zip_ref.extractall(cache_dir)
+#     lm_file = cache_dir + 'vi_lm_4grams.bin'
 
-if __name__ == "__main__":
-    processor_path = ModelConfig.W2V2_PROCESSOR_PREFIX
-    ctc_path = ModelConfig.W2V2_FOR_CTC_PREFIX
-    download_pretrain_model('', processor_path, ctc_path)
+# if __name__ == "__main__":
+#     processor_path = ModelConfig.W2V2_PROCESSOR_PREFIX
+#     ctc_path = ModelConfig.W2V2_FOR_CTC_PREFIX
+#     download_pretrain_model('', processor_path, ctc_path)
         
     
