@@ -65,7 +65,11 @@ class VoiceService():
         rs = []
         sr = librosa.get_samplerate(audio_path)
         stream = librosa.stream(audio_path,
+<<<<<<< HEAD
                             block_length=128,
+=======
+                            block_length=256,
+>>>>>>> 1607f6d4ade674c75c12659189ad08d670c4b1e0
                             frame_length=4096,
                             hop_length=1024)
         
@@ -102,5 +106,22 @@ class VoiceService():
 #     ctc_path = ModelConfig.W2V2_FOR_CTC_PREFIX
 #     download_pretrain_model('', processor_path, ctc_path)
 
-        
+if __name__ == "__main__":
+    fp = '/media/hoangnv/windata/company/project/apistt/meeting_17122021_8_1222.wav'
+    # voice_service = VoiceService(mc.W2V2_LM_PREFIX,
+    #                          mc.W2V2_PROCESSOR_PREFIX,
+    #                          mc.W2V2_FOR_CTC_PREFIX)
+    # rs = voice_service.long_voice_service(fp)
+    # print(rs)
+    
+    sr = librosa.get_samplerate(fp)
+    stream = librosa.stream(fp,
+                        block_length=256,
+                        frame_length=4096,
+                        hop_length=1024)
+    count = 0
+    for y in stream:
+        if count == 1:
+            sf.write('./demo2.wav', y, samplerate=sr, format = 'wav')
+        count+=1
     
