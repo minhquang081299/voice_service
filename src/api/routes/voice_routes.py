@@ -9,6 +9,7 @@ from src.api.services.file_service import FileService
 from flask import Response, jsonify
 from pathlib import Path
 import os
+import urllib
 from werkzeug.utils import secure_filename
 
 
@@ -22,7 +23,7 @@ ALLOWED_EXTENSIONS = {'wav', 'mp3', 'm4a'}
 def _allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-           
+
            
 #v1: absoluted path for audio file
 #v2: get url stream
@@ -87,9 +88,7 @@ def voice_regconition_controller(user):
 #v2: split_file
 @voice_routes.route('/voice-service/long-audio/<int:user>', methods=['POST'])
 def voice_regconition_controller_long_file(user):
-    """this api accept file with duration of equal or bellow 25s
-    Returns:
-        response: contain data and error
+    """taccept long files
     """
     error = None
     data = None

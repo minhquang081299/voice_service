@@ -6,6 +6,7 @@ import src.api.utils.responses as resp
 import logging
 from os.path import join, dirname, realpath
 from src.api.routes.voice_routes import voice_routes
+from src.api.routes.voice_routes_v2 import voice_routes_v2
 from src.api.routes.file_routes import file_routes
 from src.api.config.config import ModelConfig as mc
 
@@ -20,7 +21,7 @@ ma.init_app(app)
 with app.app_context():
     db.create_all()
 
-
+app.register_blueprint(voice_routes_v2, url_prefix='/api/v2')
 app.register_blueprint(voice_routes, url_prefix='/api/v1')
 app.register_blueprint(file_routes, url_prefix='/api/v1/files')
 
