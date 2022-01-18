@@ -65,7 +65,7 @@ class VoiceService():
         rs = []
         sr = librosa.get_samplerate(audio_path)
         stream = librosa.stream(audio_path,
-                            block_length=64,
+                            block_length=128,
                             frame_length=4096,
                             hop_length=1024)
         

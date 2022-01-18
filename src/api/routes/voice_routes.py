@@ -144,3 +144,5 @@ def voice_regconition_controller_long_file(user):
     rm = jsonify(vars(rm)) 
     rm.headers["Content-Type"] = "application/json;charset=utf8"
     return rm
+
+
