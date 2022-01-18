@@ -7,7 +7,7 @@ bin-release/
 # Other files and folders
 .settings/
 src/static/model
-src/static/data
+src/static/data/*
 cache/
 .vscode/
 
