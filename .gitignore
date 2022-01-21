@@ -11,7 +11,8 @@ src/static/data/*
 cache/
 .vscode/
 
-__pycache__/
+*/__pycache__/
+
 *.py[cod]
 # Executables
 *.swf

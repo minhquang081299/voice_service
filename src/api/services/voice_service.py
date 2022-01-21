@@ -36,7 +36,6 @@ class VoiceService():
         # convert space character representation
         vocab_list[tokenizer.word_delimiter_token_id] = " "
         # specify ctc blank char index, since conventially it is the last entry of the logit matrix
-        print(tokenizer)
         alphabet = Alphabet.build_alphabet(vocab_list, ctc_token_idx=tokenizer.pad_token_id)
         lm_model = kenlm.Model(self._ngram_lm_model_path)
         decoder = BeamSearchDecoderCTC(alphabet,
@@ -102,22 +101,5 @@ class VoiceService():
 #     ctc_path = ModelConfig.W2V2_FOR_CTC_PREFIX
 #     download_pretrain_model('', processor_path, ctc_path)
 
-if __name__ == "__main__":
-    fp = '/media/hoangnv/windata/company/project/apistt/meeting_17122021_8_1222.wav'
-    # voice_service = VoiceService(mc.W2V2_LM_PREFIX,
-    #                          mc.W2V2_PROCESSOR_PREFIX,
-    #                          mc.W2V2_FOR_CTC_PREFIX)
-    # rs = voice_service.long_voice_service(fp)
-    # print(rs)
-    
-    sr = librosa.get_samplerate(fp)
-    stream = librosa.stream(fp,
-                        block_length=256,
-                        frame_length=4096,
-                        hop_length=1024)
-    count = 0
-    for y in stream:
-        if count == 1:
-            sf.write('./demo2.wav', y, samplerate=sr, format = 'wav')
-        count+=1
+
     
